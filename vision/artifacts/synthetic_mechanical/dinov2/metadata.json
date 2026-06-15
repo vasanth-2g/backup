@@ -1,0 +1,38 @@
+{
+  "dataset": "Synthetic Mechanical Defects",
+  "experimental": true,
+  "evaluation_mode": "functional_demo_no_independent_normal_test",
+  "model_name": "facebook/dinov2-base",
+  "normal_memory_sources": [
+    "Generated image 1.png",
+    "Generated image 2.png"
+  ],
+  "memory_bank_patches": 12288,
+  "image_threshold": 0.0029801358468830585,
+  "pixel_threshold": 0.05001652240753174,
+  "image_metrics": {
+    "experimental": true,
+    "roc_auc": 0.9099999999999999,
+    "pr_auc": 0.9829874117328055,
+    "precision": 0.8584070796460177,
+    "recall": 0.97,
+    "f1": 0.9107981220657277,
+    "false_alarms": 16,
+    "missed_anomalies": 3
+  },
+  "pixel_metrics": {
+    "experimental": true,
+    "pixel_roc_auc": 0.9709227488027514,
+    "pixel_average_precision": 0.41770927984149764,
+    "pixel_f1": 0.4887005649717514,
+    "mean_anomaly_iou": 0.28630075561693213
+  },
+  "limitations": [
+    "Synthetic defects are programmatic overlays.",
+    "Only two independent normal source images were available.",
+    "Both normal sources were used in the memory bank.",
+    "There is no independent normal test set.",
+    "Metrics are experimental and do not establish deployment accuracy.",
+    "DINOv2 detects and localizes anomalies but does not classify defect type."
+  ]
+}

@@ -15,6 +15,5 @@ data/*.zip
 
 
 # Runtime noise
-.ipynb_checkpoints/
 **/.ipynb_checkpoints/
 *.zip

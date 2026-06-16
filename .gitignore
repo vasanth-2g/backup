@@ -1,5 +1,4 @@
 
-*.zip
 
 # Ignore heavy datasets and generated image data
 data/VisA/
@@ -16,4 +15,3 @@ data/_cmapss_extract/
 
 # Runtime noise
 **/.ipynb_checkpoints/
-*.zip

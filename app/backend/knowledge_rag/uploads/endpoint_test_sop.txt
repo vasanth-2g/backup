@@ -1,0 +1,1 @@
+﻿Robotic arm corrosion SOP: inspect corroded metallic components, isolate moisture source, clean affected surface, apply anti-corrosion coating, verify fasteners, and schedule follow-up inspection. RCA status should consider chemical vapor exposure, humidity, and protective coating degradation.

@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RAG Documents</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #121a2f;
+      --panel-2: #17213a;
+      --text: #edf2ff;
+      --muted: #9aa8c7;
+      --accent: #7dd3fc;
+      --accent-2: #a7f3d0;
+      --warning: #facc15;
+      --good: #34d399;
+      --bad: #fb7185;
+      --border: #27334f;
+      --surface: rgba(15, 23, 42, 0.68);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, Segoe UI, system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background:
+        linear-gradient(180deg, rgba(12, 20, 39, 0.96), var(--bg) 420px),
+        radial-gradient(circle at top left, #1b2a52 0, transparent 36%);
+    }
+    header {
+      padding: 24px 34px 18px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(9, 14, 28, 0.82);
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(10px);
+      z-index: 2;
+    }
+    h1 { margin: 0 0 8px; font-size: 28px; letter-spacing: 0; }
+    h2, h3 { letter-spacing: 0; }
+    .subtitle { color: var(--muted); max-width: 980px; line-height: 1.5; }
+    main { padding: 24px 34px 42px; max-width: 1480px; margin: 0 auto; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+    .card {
+      background: linear-gradient(180deg, rgba(20, 29, 52, 0.94), rgba(13, 20, 38, 0.94));
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 18px 42px rgba(0, 0, 0, 0.20);
+    }
+    .span-3 { grid-column: span 3; }
+    .span-4 { grid-column: span 4; }
+    .span-5 { grid-column: span 5; }
+    .span-7 { grid-column: span 7; }
+    .span-12 { grid-column: span 12; }
+    .top-band {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px;
+      align-items: start;
+    }
+    .upload-grid {
+      display: grid;
+      grid-template-columns: minmax(260px, 0.9fr) minmax(320px, 1.1fr);
+      gap: 14px;
+      margin-top: 14px;
+      align-items: stretch;
+    }
+    .upload-field {
+      display: grid;
+      gap: 8px;
+      min-width: 0;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface);
+    }
+    .file-name {
+      min-height: 20px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .run-row {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 12px;
+      margin-top: 16px;
+      min-height: 42px;
+    }
+    .metric-card {
+      min-height: 132px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .label {
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 7px;
+    }
+    .metric {
+      font-size: 28px;
+      font-weight: 750;
+      line-height: 1.1;
+    }
+    .small { color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .section-title {
+      margin: 0 0 14px;
+      font-size: 18px;
+      letter-spacing: 0;
+    }
+    pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: #d8e2ff;
+      background: #070b16;
+      border: 1px solid var(--border);
+      padding: 14px;
+      border-radius: 10px;
+      max-height: 380px;
+      overflow: auto;
+      margin: 0;
+    }
+    textarea {
+      width: 100%;
+      min-height: 180px;
+      resize: vertical;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #070b16;
+      color: var(--text);
+      padding: 12px;
+      font-family: Consolas, monospace;
+      line-height: 1.45;
+    }
+    .file-upload {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid #2563eb;
+      background: linear-gradient(180deg, #172554, #0f172a);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-weight: 700;
+      cursor: pointer;
+      width: fit-content;
+    }
+    .file-upload:hover { border-color: var(--accent); }
+    .file-upload input { display: none; }
+    .input-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+    .search-row {
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      margin-top: 12px;
+    }
+    input[type="search"] {
+      width: 100%;
+      min-height: 42px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #070b16;
+      color: var(--text);
+      padding: 10px 14px;
+      font-family: inherit;
+    }
+    .wo-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .wo-item {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: rgba(7, 11, 22, 0.48);
+      padding: 12px;
+    }
+    .wo-item strong { color: var(--accent); }
+    button {
+      appearance: none;
+      border: 1px solid #2563eb;
+      background: linear-gradient(180deg, #1d4ed8, #1e3a8a);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    button:hover { border-color: var(--accent); }
+    button.secondary {
+      background: linear-gradient(180deg, #172554, #0f172a);
+    }
+    .nav-link {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 700;
+      margin-right: 16px;
+    }
+    .nav-link:hover { color: var(--accent-2); }
+    .eyebrow {
+      color: var(--accent-2);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .status-text {
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      background: rgba(7, 11, 22, 0.6);
+      border-radius: 999px;
+      min-height: 36px;
+      display: inline-flex;
+      align-items: center;
+    }
+    .footer-note {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    details {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: rgba(7, 11, 22, 0.48);
+      overflow: hidden;
+    }
+    summary {
+      padding: 12px 14px;
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--text);
+    }
+    details pre {
+      border: 0;
+      border-top: 1px solid var(--border);
+      border-radius: 0;
+    }
+    @media (max-width: 1050px) {
+      .span-3, .span-4, .span-5, .span-7 { grid-column: span 12; }
+      .top-band, .upload-grid { grid-template-columns: 1fr; }
+      .search-row { grid-template-columns: 1fr; }
+      .run-row { justify-content: flex-start; }
+      header, main { padding-left: 18px; padding-right: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Industrial AI Maintenance Copilot</h1>
+    <div class="subtitle">
+      RAG document workspace for SOP upload, OCR-assisted image documents,
+      DINOv2 visual document matching, and hybrid retrieval used by RCA.
+    </div>
+    <div style="margin-top:12px;">
+      <a class="nav-link" href="/">Inference</a>
+      <a class="nav-link" href="/rag.html">RAG Documents</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="grid">
+      <section class="card span-12">
+        <div class="top-band">
+          <div>
+            <div class="eyebrow">Knowledge Base</div>
+            <h2 class="section-title">RAG Documents</h2>
+            <p class="small">
+              Upload SOPs, inspection guides, and image documents. Text is chunked for retrieval;
+              image SOPs are indexed with OCR when available plus DINOv2 visual embeddings.
+            </p>
+          </div>
+          <span class="small status-text" id="ragUploadStatus">Ready</span>
+        </div>
+
+        <div class="upload-grid">
+          <div class="upload-field">
+            <div class="label">Document Upload</div>
+            <label class="file-upload">
+              Choose Documents
+              <input id="ragDocumentInput" type="file" multiple accept=".txt,.md,.json,.jsonl,.csv,.log,.pdf,.xlsx,.xls,.html,.htm,.svg,.dxf,.png,.jpg,.jpeg,.bmp,.webp,.tif,.tiff,text/*,image/*" />
+            </label>
+            <span class="small file-name" id="ragFileName">No documents selected</span>
+            <div class="small">
+              Supported: text SOPs, PDFs, spreadsheets, HTML, SVG/DXF drawing text, logs, and inspection images.
+            </div>
+          </div>
+
+          <div class="upload-field">
+            <div class="label">Metadata</div>
+            <textarea id="ragMetadata" spellcheck="false"></textarea>
+          </div>
+        </div>
+
+        <div class="run-row">
+          <button class="secondary" id="refreshRagStatus">Refresh Index</button>
+          <button id="uploadRagDocuments">Index Documents</button>
+        </div>
+      </section>
+
+      <section class="card span-4 metric-card">
+        <div>
+          <div class="label">Documents</div>
+          <div class="metric" id="docCount">-</div>
+        </div>
+        <div class="small">Total indexed knowledge chunks available to RCA.</div>
+      </section>
+
+      <section class="card span-4 metric-card">
+        <div>
+          <div class="label">Uploaded</div>
+          <div class="metric" id="uploadCount">-</div>
+        </div>
+        <div class="small">Chunks added through this app document endpoint.</div>
+      </section>
+
+      <section class="card span-4 metric-card">
+        <div>
+          <div class="label">Visual Index</div>
+          <div class="metric" id="visualCount">-</div>
+        </div>
+        <div class="small">Image documents with DINOv2 visual embeddings.</div>
+      </section>
+
+      <section class="card span-12">
+        <div class="top-band">
+          <div>
+            <div class="eyebrow">Work Orders</div>
+            <h2 class="section-title">Parts and Damage Search</h2>
+            <p class="small">
+              Search uploaded Excel work orders and spare-part sheets for damaged parts, fault type,
+              corrective action, and report rows.
+            </p>
+          </div>
+          <span class="small status-text" id="workOrderStatus">Ready</span>
+        </div>
+        <div class="search-row">
+          <input id="workOrderQuery" type="search" placeholder="Search part, damage, asset, work order, action..." />
+          <button id="searchWorkOrders">Search Work Orders</button>
+        </div>
+        <div class="wo-list" id="workOrderResults"></div>
+      </section>
+
+      <section class="card span-12">
+        <h2 class="section-title">Raw Index State</h2>
+        <details>
+          <summary>Show collection JSON</summary>
+          <pre id="ragCollectionStatus">Refresh to load index state.</pre>
+        </details>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    async function refreshRagStatus() {
+      const status = document.getElementById("ragUploadStatus");
+      status.textContent = "Loading index...";
+      try {
+        const res = await fetch("/api/rag/documents");
+        const body = await res.json();
+        if (!res.ok) {
+          throw new Error(JSON.stringify(body, null, 2));
+        }
+        document.getElementById("docCount").textContent = body.document_count ?? "-";
+        document.getElementById("uploadCount").textContent = body.uploaded_chunk_count ?? "-";
+        document.getElementById("visualCount").textContent = body.visual_embedding_count ?? "-";
+        document.getElementById("ragCollectionStatus").textContent = JSON.stringify(body, null, 2);
+        status.textContent = "Ready";
+      } catch (error) {
+        status.textContent = "Index load failed";
+        document.getElementById("ragCollectionStatus").textContent = String(error);
+      }
+    }
+
+    async function uploadRagDocuments() {
+      const status = document.getElementById("ragUploadStatus");
+      const files = Array.from(document.getElementById("ragDocumentInput").files);
+      if (!files.length) {
+        status.textContent = "Choose documents first.";
+        return;
+      }
+
+      try {
+        const metadataText = document.getElementById("ragMetadata").value.trim();
+        const metadata = metadataText ? JSON.parse(metadataText) : {};
+        const form = new FormData();
+        form.append("metadata", JSON.stringify(metadata));
+        files.forEach((file) => form.append("documents", file));
+
+        status.textContent = "Indexing documents...";
+        const res = await fetch("/api/rag/documents", { method: "POST", body: form });
+        const body = await res.json();
+        if (!res.ok) {
+          throw new Error(JSON.stringify(body, null, 2));
+        }
+
+        const chunks = body.uploaded.reduce((sum, item) => sum + Number(item.added_chunks || 0), 0);
+        status.textContent = `Indexed ${chunks} chunks.`;
+        document.getElementById("docCount").textContent = body.collection.document_count ?? "-";
+        document.getElementById("uploadCount").textContent = body.collection.uploaded_chunk_count ?? "-";
+        document.getElementById("visualCount").textContent = body.collection.visual_embedding_count ?? "-";
+        document.getElementById("ragCollectionStatus").textContent = JSON.stringify(body.collection, null, 2);
+      } catch (error) {
+        status.textContent = "Indexing failed.";
+        document.getElementById("ragCollectionStatus").textContent = String(error);
+      }
+    }
+
+    function renderWorkOrders(body) {
+      const target = document.getElementById("workOrderResults");
+      if (!body.results || !body.results.length) {
+        target.innerHTML = `<div class="small">No matching work-order records found.</div>`;
+        return;
+      }
+      const partSummary = body.damaged_parts && body.damaged_parts.length
+        ? `<div class="small">Damaged parts: ${body.damaged_parts.map((item) => `${item.part} (${item.count})`).join(", ")}</div>`
+        : "";
+      const damageSummary = body.damage_types && body.damage_types.length
+        ? `<div class="small">Damage types: ${body.damage_types.map((item) => `${item.damage_type} (${item.count})`).join(", ")}</div>`
+        : "";
+      const rows = body.results.map((item) => `
+        <div class="wo-item">
+          <strong>${item.work_order_id || item.record_id}</strong>
+          <div class="small">Asset: ${item.asset_id || "-"} | Part: ${item.part || "-"} | Damage: ${item.damage_type || "-"}</div>
+          <div class="small">Action: ${item.action || "-"}</div>
+          <div>${item.report || ""}</div>
+          <div class="small">Source: ${item.source_file}, sheet ${item.sheet}, row ${item.row}; score ${Number(item.score || 0).toFixed(3)}</div>
+        </div>
+      `).join("");
+      target.innerHTML = `${partSummary}${damageSummary}${rows}`;
+    }
+
+    async function searchWorkOrders() {
+      const status = document.getElementById("workOrderStatus");
+      const query = document.getElementById("workOrderQuery").value.trim();
+      status.textContent = "Searching...";
+      try {
+        const res = await fetch("/api/work-orders/search", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ query, limit: 8 })
+        });
+        const body = await res.json();
+        if (!res.ok) {
+          throw new Error(JSON.stringify(body, null, 2));
+        }
+        renderWorkOrders(body);
+        status.textContent = `${body.result_count} results`;
+      } catch (error) {
+        status.textContent = "Search failed";
+        document.getElementById("workOrderResults").innerHTML = `<pre>${String(error)}</pre>`;
+      }
+    }
+
+    document.getElementById("ragMetadata").value = JSON.stringify(
+      {
+        document_type: "sop",
+        asset_type: "industrial_asset",
+        revision: "1.0",
+        tags: ["maintenance", "inspection", "safety"]
+      },
+      null,
+      2
+    );
+
+    document.getElementById("ragDocumentInput").addEventListener("change", (event) => {
+      const files = Array.from(event.target.files || []);
+      document.getElementById("ragFileName").textContent = files.length
+        ? files.map((file) => file.name).join(", ")
+        : "No documents selected";
+    });
+
+    document.getElementById("uploadRagDocuments").addEventListener("click", uploadRagDocuments);
+    document.getElementById("refreshRagStatus").addEventListener("click", refreshRagStatus);
+    document.getElementById("searchWorkOrders").addEventListener("click", searchWorkOrders);
+    document.getElementById("workOrderQuery").addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        searchWorkOrders();
+      }
+    });
+    refreshRagStatus();
+  </script>
+</body>
+</html>

@@ -1,17 +1,10 @@
-
+app/test_inputs
 
 # Ignore heavy datasets and generated image data
 data/VisA/
 data/CMAPSSData/
 data/_cmapss_extract/
 data/synthetic_mechanical/
-
-
-
-
-
-
-
 
 
 
@@ -23,6 +16,7 @@ data/synthetic_mechanical/
 *.jpg
 *.jpeg
 *.JPG
+app/runtime/
 
 # notebooks temp
 .ipynb_checkpoints/
@@ -33,6 +27,7 @@ __pycache__/
 
 # artifacts/models
 **/artifacts/
+
 *.npy
 
 # generated synthetic data

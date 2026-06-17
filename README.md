@@ -174,3 +174,87 @@ RAG and LLM RCA behavior:
 
 Runtime XGBoost scoring requires `joblib`, `pandas`, `xgboost`, and
 `scikit-learn`. The frontend is plain HTML/CSS/JavaScript.
+
+## Clone Setup Steps
+
+Use these steps after cloning the repo on a new machine or server.
+
+```powershell
+git clone https://github.com/vasanth-2g/backup.git
+cd backup
+```
+
+Create and activate a Python environment:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+```
+
+Install runtime packages:
+
+```powershell
+pip install numpy pandas scikit-learn xgboost joblib pillow opencv-python matplotlib
+pip install transformers torch safetensors huggingface-hub
+pip install pymupdf beautifulsoup4 openpyxl
+```
+
+Optional packages:
+
+```powershell
+pip install pytesseract chromadb
+```
+
+Download model weights that are not stored in git:
+
+```powershell
+python app/download_dinov2_weights.py
+```
+
+Check these folders exist after download:
+
+```text
+app/backend/vision_dinov2/facebook_dinov2_base
+app/backend/vision_dinov2/google_owlvit_base_patch32
+app/backend/vision_dinov2/facebook_sam_vit_base
+```
+
+Check the XGBoost runtime artifacts are present:
+
+```text
+app/backend/XGboost/telemetry_risk/xgb_rul_model.joblib
+app/backend/XGboost/telemetry_risk/xgb_risk_model.joblib
+app/backend/XGboost/telemetry_risk/feature_columns.json
+app/backend/XGboost/telemetry_risk/metadata.json
+```
+
+Start the app:
+
+```powershell
+python app/backend/server.py
+```
+
+Open:
+
+```text
+http://127.0.0.1:8000
+```
+
+Recommended first-run order:
+
+1. Open `/rag.html`.
+2. Upload clean normal/reference images in **DINOv2 Normal Reference Memory**.
+3. Upload SOPs, PDFs, work orders, or maintenance notes into RAG documents.
+4. Go back to `/`.
+5. Upload `input.txt` scenario and one inspection image.
+6. Run scenario inference.
+7. Use **Scenario Chat** to ask next-step, RCA, part, or cycle questions.
+
+Important notes:
+
+- Vision Memory should contain clean normal images only, not anomaly images.
+- Scenario inference image is where the anomaly/oil leak/corrosion/crack image is uploaded.
+- Restart the server after changing `app/model_config.json`.
+- `app/runtime` is recreated on every server start, so old uploaded inputs and generated outputs are cleared.
+- If chat or RCA looks unchanged after code edits, stop and restart `python app/backend/server.py`.
